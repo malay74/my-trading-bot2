@@ -14,9 +14,9 @@ MIN_PERCENT = 0.4
 TELEGRAM_TOKEN = '8203153392:AAFbZ23HI0QQnIDZSh22bsg2IUzBnnGtBBo'
 CHAT_ID = '6036761046'
 
-# --- FIXED BINANCE CONNECTION FOR INDIA/RESTRICTED REGIONS ---
 exchange = ccxt.okx({
     'enableRateLimit': True
+})
 
 def send_telegram_msg(message):
     try:
