@@ -14,7 +14,9 @@ MIN_PERCENT = 0.4
 TELEGRAM_TOKEN = '8203153392:AAFbZ23HI0QQnIDZSh22bsg2IUzBnnGtBBo'
 CHAT_ID = '6036761046'
 
-exchange = ccxt.binance()
+exchange = ccxt.bybit({
+    'enableRateLimit': True
+})
 
 def send_telegram_msg(message):
     url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage?chat_id={CHAT_ID}&text={message}"
