@@ -15,19 +15,8 @@ TELEGRAM_TOKEN = '8203153392:AAFbZ23HI0QQnIDZSh22bsg2IUzBnnGtBBo'
 CHAT_ID = '6036761046'
 
 # --- FIXED BINANCE CONNECTION FOR INDIA/RESTRICTED REGIONS ---
-exchange = ccxt.binance({
-    'enableRateLimit': True,
-    'options': {
-        'adjustForTimeDifference': True,
-    },
-    # Agar aap normal system pe ho, toh ye alternative regional URLs use karega
-    'urls': {
-        'api': {
-            'public': 'https://api.binance.me/api',
-            'private': 'https://api.binance.me/api',
-        }
-    }
-})
+exchange = ccxt.okx({
+    'enableRateLimit': True
 
 def send_telegram_msg(message):
     try:
