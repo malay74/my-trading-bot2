@@ -14,15 +14,8 @@ MIN_PERCENT = 0.4
 TELEGRAM_TOKEN = '8203153392:AAFbZ23HI0QQnIDZSh22bsg2IUzBnnGtBBo'
 CHAT_ID = '6036761046'
 
-exchange = ccxt.bybit({
-    'enableRateLimit': True,
-    'urls': {
-        'api': {
-            'public': 'https://api.bybit.nl/v5',  # Bybit ka alternate domain
-            'private': 'https://api.bybit.nl/v5',
-        }
-    }
-})
+exchange = ccxt.okx({
+    'enableRateLimit': True
 })
 
 def send_telegram_msg(message):
