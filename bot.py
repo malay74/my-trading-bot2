@@ -7,15 +7,19 @@ from datetime import datetime
 import pytz
 
 # --- Configuration ---
-SYMBOL = 'ETH/USDT'  
+SYMBOL = 'ETH/USDT:USDT'  # OKX Futures (Perpetual/.P) symbol
 TIMEFRAME = '1h'
 EMA_LENGTH = 28
 MIN_PERCENT = 0.4
 TELEGRAM_TOKEN = '8203153392:AAFbZ23HI0QQnIDZSh22bsg2IUzBnnGtBBo'
 CHAT_ID = '6036761046'
 
+# Futures (Swap) Market config for OKX
 exchange = ccxt.okx({
-    'enableRateLimit': True
+    'enableRateLimit': True,
+    'options': {
+        'defaultType': 'swap'  # Isse Futures (.P) market ka data aayega
+    }
 })
 
 def send_telegram_msg(message):
@@ -36,7 +40,7 @@ def is_any_session_active():
     return False
 
 def check_strategy():
-    # Data fetch karna
+    # Futures Data fetch karna
     bars = exchange.fetch_ohlcv(SYMBOL, timeframe=TIMEFRAME, limit=100)
     df = pd.DataFrame(bars, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
 
@@ -63,18 +67,23 @@ def check_strategy():
     buy_signal = is_session and price_percentage >= MIN_PERCENT and (c['low'] < p['low']) and c['close'] > p_high_low_avg and nb1
     sell_signal = is_session and price_percentage >= MIN_PERCENT and (c['high'] > p['high']) and c['close'] < p_high_low_avg and ns1
 
+    # --- LIVE FUTURES PRICE PRINTING ---
+    current_time = datetime.now(pytz.timezone('Asia/Kolkata')).strftime('%H:%M:%S')
+    print(f"[{current_time}] {SYMBOL} (.P) Live Price: {c['close']} | EMA({EMA_LENGTH}): {c['ema']:.2f}")
+
     if buy_signal:
-        send_telegram_msg(f"🚀 BUY SIGNAL: {SYMBOL} on 1H timeframe!")
+        send_telegram_msg(f"🚀 BUY SIGNAL: {SYMBOL} (.P) on 1H timeframe! Price: {c['close']}")
+        print("-> BUY SIGNAL SENT TO TELEGRAM!")
     elif sell_signal:
-        send_telegram_msg(f"🔻 SELL SIGNAL: {SYMBOL} on 1H timeframe!")
+        send_telegram_msg(f"🔻 SELL SIGNAL: {SYMBOL} (.P) on 1H timeframe! Price: {c['close']}")
+        print("-> SELL SIGNAL SENT TO TELEGRAM!")
 
 # Infinite Loop
 print("Bot Start Ho Gaya Hai...")
 while True:
     try:
         check_strategy()
-        print(f"Market check kiya: {datetime.now(pytz.timezone('Asia/Kolkata')).strftime('%H:%M:%S')} - Koi signal nahi mila.")
-        time.sleep(60) # Har ek minute me check karega close ke liye
+        time.sleep(60) # Har 60 seconds me check aur update karega
     except Exception as e:
         print(f"Error: {e}")
         time.sleep(30)
