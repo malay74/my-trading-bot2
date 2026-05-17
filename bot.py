@@ -73,6 +73,7 @@ print("Bot Start Ho Gaya Hai...")
 while True:
     try:
         check_strategy()
+        print(f"Market check kiya: {datetime.now(pytz.timezone('Asia/Kolkata')).strftime('%H:%M:%S')} - Koi signal nahi mila.")
         time.sleep(60) # Har ek minute me check karega close ke liye
     except Exception as e:
         print(f"Error: {e}")
