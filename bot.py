@@ -7,18 +7,19 @@ from datetime import datetime
 import pytz
 
 # --- Configuration ---
-SYMBOL = 'ETH/USDT:USDT'  # OKX Futures (Perpetual/.P) symbol
+# Binance Futures (USDT-M Perpetual) ke liye symbol format 'ETH/USDT' hota hai
+SYMBOL = 'ETH/USDT'  
 TIMEFRAME = '1h'
 EMA_LENGTH = 28
 MIN_PERCENT = 0.4
 TELEGRAM_TOKEN = '8203153392:AAFbZ23HI0QQnIDZSh22bsg2IUzBnnGtBBo'
 CHAT_ID = '6036761046'
 
-# Futures (Swap) Market config for OKX
-exchange = ccxt.okx({
+# Binance USDT-Margined Futures Market Configuration
+exchange = ccxt.binanceusdm({
     'enableRateLimit': True,
     'options': {
-        'defaultType': 'swap'  # Isse Futures (.P) market ka data aayega
+        'defaultType': 'future'  # Isse Binance Futures market ka data aayega
     }
 })
 
@@ -40,7 +41,7 @@ def is_any_session_active():
     return False
 
 def check_strategy():
-    # Futures Data fetch karna
+    # Binance Futures Data fetch karna
     bars = exchange.fetch_ohlcv(SYMBOL, timeframe=TIMEFRAME, limit=100)
     df = pd.DataFrame(bars, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
 
@@ -69,17 +70,17 @@ def check_strategy():
 
     # --- LIVE FUTURES PRICE PRINTING ---
     current_time = datetime.now(pytz.timezone('Asia/Kolkata')).strftime('%H:%M:%S')
-    print(f"[{current_time}] {SYMBOL} (.P) Live Price: {c['close']} | EMA({EMA_LENGTH}): {c['ema']:.2f}")
+    print(f"[{current_time}] {SYMBOL} (Binance Futures) Live Price: {c['close']} | EMA({EMA_LENGTH}): {c['ema']:.2f}")
 
     if buy_signal:
-        send_telegram_msg(f"🚀 BUY SIGNAL: {SYMBOL} (.P) on 1H timeframe! Price: {c['close']}")
+        send_telegram_msg(f"🚀 BUY SIGNAL: {SYMBOL} (Binance Futures) on 1H timeframe! Price: {c['close']}")
         print("-> BUY SIGNAL SENT TO TELEGRAM!")
     elif sell_signal:
-        send_telegram_msg(f"🔻 SELL SIGNAL: {SYMBOL} (.P) on 1H timeframe! Price: {c['close']}")
+        send_telegram_msg(f"🔻 SELL SIGNAL: {SYMBOL} (Binance Futures) on 1H timeframe! Price: {c['close']}")
         print("-> SELL SIGNAL SENT TO TELEGRAM!")
 
 # Infinite Loop
-print("Bot Start Ho Gaya Hai...")
+print("Binance Futures Bot Start Ho Gaya Hai...")
 while True:
     try:
         check_strategy()
