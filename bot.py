@@ -7,20 +7,34 @@ from datetime import datetime
 import pytz
 
 # --- Configuration ---
-SYMBOL = 'ETH/USDT'  # Apna pair yahan likhein
+SYMBOL = 'ETH/USDT'  
 TIMEFRAME = '1h'
 EMA_LENGTH = 28
 MIN_PERCENT = 0.4
 TELEGRAM_TOKEN = '8203153392:AAFbZ23HI0QQnIDZSh22bsg2IUzBnnGtBBo'
 CHAT_ID = '6036761046'
 
-exchange = ccxt.okx({
-    'enableRateLimit': True
+# --- FIXED BINANCE CONNECTION FOR INDIA/RESTRICTED REGIONS ---
+exchange = ccxt.binance({
+    'enableRateLimit': True,
+    'options': {
+        'adjustForTimeDifference': True,
+    },
+    # Agar aap normal system pe ho, toh ye alternative regional URLs use karega
+    'urls': {
+        'api': {
+            'public': 'https://api.binance.me/api',
+            'private': 'https://api.binance.me/api',
+        }
+    }
 })
 
 def send_telegram_msg(message):
-    url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage?chat_id={CHAT_ID}&text={message}"
-    requests.get(url)
+    try:
+        url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage?chat_id={CHAT_ID}&text={message}"
+        requests.get(url)
+    except Exception as e:
+        print(f"Telegram error: {e}")
 
 def is_any_session_active():
     tz = pytz.timezone('Asia/Kolkata')
@@ -65,13 +79,12 @@ def check_strategy():
     elif sell_signal:
         send_telegram_msg(f"🔻 SELL SIGNAL: {SYMBOL} on 1H timeframe!")
 
-# Infinite Loop (Har 1 ghante ke close par check karega)
+# Infinite Loop
 print("Bot Start Ho Gaya Hai...")
 while True:
     try:
         check_strategy()
-        # 1-hour interval ka wait (aap ise har 1 min check karwa sakte hain to catch the close)
-        time.sleep(60)
+        time.sleep(60) # Har ek minute me check karega close ke liye
     except Exception as e:
         print(f"Error: {e}")
         time.sleep(30)
