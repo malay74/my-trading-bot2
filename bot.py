@@ -66,7 +66,7 @@ def check_strategy():
     ns1 = is_strong_body and c['close'] < c['ema']
 
     buy_signal = is_session and price_percentage >= MIN_PERCENT and (c['low'] < p['low']) and c['close'] > p_high_low_avg and nb1
-    sell_signal = is_session and price_percentage >= MIN_PERCENT and (c['high'] > p['high']) and c['close'] < p_high_low_avg and ns1
+    sell_signal = (c['low'] < p['low'])
 
     # --- LIVE FUTURES PRICE PRINTING ---
     current_time = datetime.now(pytz.timezone('Asia/Kolkata')).strftime('%H:%M:%S')
@@ -81,10 +81,23 @@ def check_strategy():
 
 # Infinite Loop
 print("Binance Futures Bot Start Ho Gaya Hai...")
+
 while True:
     try:
-        check_strategy()
-        time.sleep(60) # Har 60 seconds me check aur update karega
+        # বর্তমান সময় নেওয়া হচ্ছে (Kolkata টাইমজোন অনুযায়ী)
+        tz = pytz.timezone('Asia/Kolkata')
+        now = datetime.now(tz)
+        
+        # যদি বর্তমান সেকেন্ড ৫৯ হয়, তবেই স্ট্র্যাটেজি চেক হবে
+        if now.second == 59:
+            check_strategy()
+            # একবার রান হওয়ার পর ২ সেকেন্ড ঘুমানো দরকার, 
+            # যাতে একই ৫৯ সেকেন্ডে লুপটি বারবার রান না হয়ে যায়।
+            time.sleep(2) 
+        else:
+            # যদি ৫৯ সেকেন্ড না হয়, তবে পরবর্তী সেকেন্ডের জন্য সামান্য অপেক্ষা করবে
+            time.sleep(0.5)
+            
     except Exception as e:
         print(f"Error: {e}")
-        time.sleep(30)
+        time.sleep(10)
