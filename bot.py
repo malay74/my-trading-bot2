@@ -12,7 +12,7 @@ SYMBOL = 'ETH/USDT'
 TIMEFRAME = '30m' 
 EMA_LENGTH = 28
 MIN_PERCENT = 0.4
-TELEGRAM_TOKEN = '8203153392:AAFbZ23HI0QQnIDZSh22bsg2IUzBnnGtBBo'
+TELEGRAM_TOKEN = '8203153392:AAGLC-NYca3qd7Iu6J-oKsn1YjLKSZIDse0'
 CHAT_ID = '6036761046'
 
 exchange = ccxt.binanceusdm({
@@ -77,8 +77,8 @@ def check_strategy():
         nb1 = is_strong_body and c['close'] > c['ema']
         ns1 = is_strong_body and c['close'] < c['ema']
 
-        buy_signal = close > open
-        sell_signal = close < open
+        buy_signal = c['close'] > c['open']
+        sell_signal = c['close'] < c['open']
 
         # --- LIVE STATUS PRINT ---
         candle_start = custom_1h.index[-1].strftime('%H:%M')
