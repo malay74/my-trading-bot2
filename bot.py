@@ -30,7 +30,7 @@ def send_telegram_msg(message):
 def is_any_session_active():
     tz = pytz.timezone('Asia/Kolkata')
     now = datetime.now(tz).strftime('%H:%M')
-    sessions = [("08:30", "11:30"), ("12:30", "16:30"), ("17:30", "19:30"), ("20:30", "22:30")]
+    sessions = [("08:31", "11:30"), ("12:31", "16:30"), ("17:31", "19:30"), ("20:31", "22:30")]
     for start, end in sessions:
         if start <= now <= end:
             return True
