@@ -30,7 +30,7 @@ def send_telegram_msg(message):
 def is_any_session_active():
     tz = pytz.timezone('Asia/Kolkata')
     now = datetime.now(tz).strftime('%H:%M')
-    sessions = [("08:31", "11:30"), ("12:31", "16:30"), ("17:31", "19:30"), ("20:31", "22:30")]
+    sessions = [("12:31", "16:30"), ("17:31", "19:30"), ("20:31", "22:30")]
     for start, end in sessions:
         if start <= now <= end:
             return True
@@ -77,8 +77,8 @@ def check_strategy():
         nb1 = is_strong_body and c['close'] > c['ema']
         ns1 = is_strong_body and c['close'] < c['ema']
 
-        buy_signal = c['close'] > c['open']
-        sell_signal = c['close'] < c['open']
+        buy_signal = is_session and c['close'] > c['open']
+        sell_signal = is_session and c['close'] < c['open']
 
         # --- LIVE STATUS PRINT ---
         candle_start = custom_1h.index[-1].strftime('%H:%M')
